@@ -1,28 +1,20 @@
-import sqlite3
-import csv
-
-DB_FILE = 'patients.db'
+import sqlite3, csv, os
 
 def export_data(user):
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute("SELECT name, ssn, diagnosis FROM patient_records WHERE created_by = ?", (user,))
-    rows = cursor.fetchall()
+    conn = sqlite3.connect('patients.db')
+    rows = conn.execute(
+        "SELECT name, ssn, diagnosis FROM patient_records WHERE created_by = ?", (user,)
+    ).fetchall()
     conn.close()
 
-    filename = '%s_export.csv' % user
-    with open(filename, 'wb') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Name', 'SSN', 'Diagnosis'])
-        writer.writerows(rows)
+    path = '%s_export.csv' % user
+    with open(path, 'wb') as f:
+        csv.writer(f).writerows([['Name', 'SSN', 'Diagnosis']] + rows)
 
-    print("Export complete: %s" % filename)
-
-def main():
-    print("=== Export Tool ===")
-    user = raw_input("Username: ")
-    export_data(user)
-    print("Done.")
+    os.chmod(path, 0o600)
+    print("Exported to %s" % path)
 
 if __name__ == '__main__':
-    main()
+    print("=== Export Tool ===")
+    export_data(raw_input("Username: "))
+    print("Done.")
