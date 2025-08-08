@@ -2,29 +2,22 @@ import logging
 
 logging.basicConfig(filename='login.log', level=logging.INFO)
 
-CREDENTIALS = {
-    'admin': 'admin123',
-    'doctor': 'doc2020',
-    'nurse': 'nursepass'
-}
+CREDENTIALS = {'admin': 'admin123', 'doctor': 'doc2020', 'nurse': 'nursepass'}
 
-def authenticate(username, password):
-    logging.info("User attempted login: %s with password: %s", username, password)
-    if username in CREDENTIALS:
-        if CREDENTIALS[username] == password:
-            logging.info("Login success for %s", username)
-            return True
-    logging.warning("Login failed for %s", username)
+def authenticate(user, pwd):
+    logging.info("Login attempt: %s / %s", user, pwd)
+    if CREDENTIALS.get(user) == pwd:
+        logging.info("Login success: %s", user)
+        return True
+    logging.warning("Login failed: %s", user)
     return False
 
 def main():
-    print("Welcome to the Hospital Record System")
-    username = raw_input("Username: ")
-    password = raw_input("Password: ")
-
-    if authenticate(username, password):
-        print("Access granted")
-        print("Fetching sensitive patient data...")
+    print("Welcome to Hospital System")
+    user = raw_input("Username: ")
+    pwd = raw_input("Password: ")
+    if authenticate(user, pwd):
+        print("Access granted\nFetching sensitive data...")
     else:
         print("Access denied")
 
